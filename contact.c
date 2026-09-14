@@ -6,6 +6,11 @@
 void listContacts(AddressBook *addressBook) 
 {
     // Sort contacts based on the chosen criteria
+    printf("------------List of Contacts--------- \n");
+    printf("%-10s %-20s %s\n", "Name", "Phone", "Email");
+    for(int i=0;i<addressBook->contactCount;i++){
+      printf("%-10s %-20s %s\n",addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
+    }
     
 }
 
@@ -21,60 +26,30 @@ void saveAndExit(AddressBook *addressBook) {
     exit(EXIT_SUCCESS); // Exit the program
 }
 
-
+ void get_phone(AddressBook *addressBook,char *phone);
 void createContact(AddressBook *addressBook)
 {
 	/* Define the logic to create a Contacts */
-    int count=0;
-    do{
-    printf("enter the name of contact:- ");
-    scanf(" %[^\n]",addressBook->contacts->name);
-    if((addressBook->contacts->name[0]>='a'&&addressBook->contacts->name[0]<='z')
-      ||(addressBook->contacts->name[0]>='A'&&addressBook->contacts->name[0]<='Z')){
-         count=0;
-        do{
-         printf("enter Phone number:-");
-        scanf(" %[^\n]",addressBook->contacts->phone);
-        
-          if(addressBook->contacts->phone[0]>='6'&&addressBook->contacts->phone[0]<='9'){
-            count=0;
-            int i=0;
-             while(addressBook->contacts->phone[i]!='\0'){
-                  if(addressBook->contacts->phone[i]>='0'&&addressBook->contacts->phone[i]<='9'){
-                    i++;
-                  }
-                  else{
-                    printf("enter only digits\n");
-                    count++;
-                    break; 
-                  }
-             }
-             if(i==10){
-                //check for unique number
-                printf("check for unique");
-
-             }
-             else{
-                printf("enter phone number with 10 digits\n");
-                count++;
-             }
-            
-          }
-          else{
-            printf("enter the first digit range of 6 to 9\n");
-            count++;
-          }
-       }while(count!=3);
-        
+    char name[50];
+    char phone[20];
+    char email[50];
+   int count=0;
+   do{
+    printf("Enter name: ");
+    scanf(" %[^\n]",name);
+    if((name[0]>='A'&&name[0]<='Z')||(name[0]>='a'&&name[0]<='z')){
+      strcpy(addressBook->contacts[addressBook->contactCount].name,name);
+      get_phone(addressBook,phone);
+       
+       break;
     }
-
-   else{
-     printf("enter first character as alphabet\n");
-        count++;
+    else{
+      printf("first character should be alphabet\n");
+      count++;
     }
-}while(count!=3);
-
-
+  }while(count<3);
+      
+    
 }
     
 
@@ -82,6 +57,7 @@ void createContact(AddressBook *addressBook)
 void searchContact(AddressBook *addressBook) 
 {
     /* Define the logic for search */
+    
 }
 
 void editContact(AddressBook *addressBook)
@@ -95,3 +71,204 @@ void deleteContact(AddressBook *addressBook)
 	/* Define the logic for deletecontact */
    
 }
+
+int get_validate(AddressBook *addressBook,char *phone);
+void get_email(AddressBook *addressBook,char *email);
+void get_phone(AddressBook *addressBook,char *phone){
+  char email[50];
+  int count=0;
+    printf("------------phone number--------- \n");
+    printf("            should be start with 6,7,8,9\n");
+    printf("            should contain 10 digit only not a single other charcater\n");
+  do{
+    printf("enter phone number :-");
+    scanf(" %[^\n]", phone);
+        if(phone[0]>='6'&&phone[0]<='9'){//start with 6/7/8/9
+         int i=0;
+          while(phone[i]!='\0')
+          {    
+                if(phone[i]>='0'&&phone[i]<='9'){  //checks numbers character and counts
+                   i++;
+                 }
+                 else{
+                    count++;
+                  printf("should contain only digits\n");
+                    break;
+                  
+                 }
+                }
+
+                 if(i!=10){
+                    count++;
+                    printf("should contain 10 digit only\n");
+
+                 }
+                else{
+                     int res= get_validate(addressBook,phone);
+                     if(res){
+                       strcpy(addressBook->contacts[addressBook->contactCount].phone,phone);
+                       printf("phone number is added\n");
+                       get_email(addressBook,email);
+                       break;
+                     }
+                     else{
+                      count++;
+                      printf("phone number is matched\n");
+                     }
+                 }
+                }
+        else{
+          count++;
+          printf("should start with 6/7/8/9\n");
+        }
+  }while(count<3);
+
+}
+
+int get_validate(AddressBook *addressBook,char *phone){
+      int flag=1;//comparing any existing phone number
+      for(int i=0;i<addressBook->contactCount;i++){
+        if(strcmp(addressBook->contacts[i].phone,phone)==0){
+          flag=0;
+          break;
+        }
+        else{
+          flag;
+        }
+
+      }
+      return flag;
+    
+
+}
+
+//void get_domain(AddressBook *addressBook,char *email,int *count);
+int get_domain(char *email,int n);
+int validate_unique_email(AddressBook *addressBook,char *email);
+void get_email(AddressBook *addressBook,char *email){
+    int count=0;
+    do{
+    char email[50]; 
+    printf("enter the email details:- ");                
+    scanf(" %s", email);         
+    if(email[0]>='a'&&email[0]<='z'||email[0]>='0'&&email[0]<='9'){//check first charcacter
+        int i=1;
+        int flag=1;                                        //check for first charcter
+        while(email[i]!='\0'){                      
+             if(!(email[i]>='A'&&email[i]<='Z')){        //email should not contain any uppercase
+               flag=1;
+               i++;
+             }
+             else{
+                printf("email should not contain upper case\n");
+                count++;
+                break;
+             }
+        }
+        if(flag==1){                                    //now whole array not with any upper case
+            int atcount=0; // traverse whole string to count @
+            int atposition;
+            int i=0;                                                        
+            while(email[i]!='\0'){
+                if(email[i]=='@'){
+                    atcount++;
+                    atposition = i;
+                    i++;
+                }
+                else{
+                    i++;
+                }
+            }
+            if(atcount==1){        //check for .com             
+              int res=get_domain(email,atposition);
+              if(res){
+                int uniq=validate_unique_email(addressBook,email);
+                if(uniq){
+                  strcpy(addressBook->contacts[addressBook->contactCount].email,email);
+                       printf("email is added\n");
+                       addressBook->contactCount++;
+                       return;
+                }
+                else{
+                  printf("email is already exist\n");
+                  count++;
+                }
+              }
+              else{
+                count++;
+              }
+            }
+            else{
+                printf("should contain only 1 @\n");
+                count++;
+            }
+
+        }
+    }
+    else{
+        count++;
+        printf("first charc either lower case or digit\n");
+    }
+}while(count<3);
+}
+
+
+int get_domain(char *email,int n){
+
+     int atdotcom=0;
+     
+     char *ptr=email;
+     while((ptr=strstr(ptr,".com"))!=NULL){//!=NULL .com is present
+         atdotcom++;
+
+         ptr++;
+     }
+     
+      
+     if(atdotcom==1){
+        int i=n+1;//i points to 1 point after @
+        int charc=0;
+        while(email[i]!='.'){
+            charc++;
+            i++;
+        }
+        if(charc>=5){
+            return 1;
+        }
+        else{
+            printf("invalid domain\n");
+            return 0;
+            
+        }
+     }
+     else if(atdotcom>1){
+        printf("should not contain more than 1 .com\n");
+        return 0;
+     }
+     else{
+        printf("should contain atleast 1 .com\n");
+        return 0;
+     }
+
+    }
+
+    int validate_unique_email(AddressBook *addressBook,char *email){
+      
+      int flag=1;//comparing any existing phone number
+      for(int i=0;i<addressBook->contactCount;i++){
+        if(strcmp(addressBook->contacts[i].email,email)==0){
+          flag=0;
+          break;
+        }
+        else{
+          flag;
+        }
+
+      }
+      return flag;
+    }
+
+
+
+
+
