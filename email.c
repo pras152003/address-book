@@ -99,3 +99,45 @@ int get_domain(char *email,int n){
      }
 
 }
+
+void get_domain(char *email,int n,int *res){
+
+     int atdotcom=0;
+     
+     char *ptr=email;
+     while((ptr=strstr(ptr,".com"))!=NULL){//!=NULL .com is present
+         atdotcom++;
+         ptr++;
+     }
+     
+      
+     if(atdotcom==1){
+        int i=n+1;//i points to 1 point after @
+        int charc=0;
+        while(email[i]!='.'){
+            charc++;
+            i++;
+        }
+        if(charc>=5){
+          *res=1;
+          return;
+        }
+        else{
+            printf("invalid domain\n");
+            *res=0;
+            return;
+            
+        }
+     }
+     else if(atdotcom>1){
+        printf("should not contain more than 1 .com\n");
+        *res=0;
+        return;
+     }
+     else{
+        printf("should contain atleast 1 .com\n");
+        *res=0;
+        return;
+     }
+
+    }

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "contact.h"
 
+int edit=0;
+int index=0;
 int main() 
 {
     int choice;
@@ -26,7 +28,7 @@ int main()
                 createContact(&addressBook);
                 break;
             case 2:
-                searchContact(&addressBook);
+                searchContact(&addressBook,&edit,&index);
                 break;
             case 3:
                 editContact(&addressBook);
