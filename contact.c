@@ -8,10 +8,10 @@
 void listContacts(AddressBook *addressBook) 
 {
     // Sort contacts based on the chosen criteria
-    printf("------------List of Contacts--------- \n");
-    printf("%-10s %-10s %-20s %s\n", "contacts",  "Name", "Phone", "Email");
+    printf("%60s","------------List of Contacts--------- \n");
+    printf("%-10s %-20s %-15s %-25s\n", "contacts",   "Name", "Phone", "Email");
     for(int i=0;i<addressBook->contactCount;i++){
-      printf("%-10d %-10s %-20s %s\n",i+1,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
+      printf("%-10d %-20s %-15s %-25s\n",i+1,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
     }
     
 }
@@ -106,7 +106,7 @@ void get_validatephone(AddressBook *addressBook,char *phone,int *res1){
      }
 }
 
-int get_validate(AddressBook *addressBook,char *phone);
+void get_validate(AddressBook *addressBook,char *phone,int *res);
 void get_email(AddressBook *addressBook,char *email);
 void get_phone(AddressBook *addressBook,char *phone){
   char email[50];
@@ -123,9 +123,11 @@ void get_phone(AddressBook *addressBook,char *phone){
              count++;
              continue;
                }
-                else{
-                     int res= get_validate(addressBook,phone);//check unique
-                     if(res){
+                else if(res1!=0){
+                 
+                     int res=0;
+                     get_validate(addressBook,phone,&res);//check unique
+                     if(res==1){
                        strcpy(addressBook->contacts[addressBook->contactCount].phone,phone);
                        printf("phone number is added\n");
                        get_email(addressBook,email);
@@ -133,8 +135,9 @@ void get_phone(AddressBook *addressBook,char *phone){
                      }
                      else{
                       count++;
-                      printf("phone number is matched\n");
+                      //printf("phone number is matched\n");
                      }
+                    // return;
                  }
                 
         
@@ -143,24 +146,27 @@ void get_phone(AddressBook *addressBook,char *phone){
 
 
 
-int get_validate(AddressBook *addressBook,char *phone){
+void get_validate(AddressBook *addressBook,char *phone,int *res){
       int flag=1;//comparing any existing phone number
       for(int i=0;i<addressBook->contactCount;i++){
         if(strcmp(addressBook->contacts[i].phone,phone)==0){
-          flag=0;//phone number is matching
+          *res=0;//phone number is matching
+          flag=0;
+          printf("phone number is matching\n");
           break;
         }
-        else{
-          flag;
+      }
+        if(flag){
+          *res=1;
         }
 
-      }
-      return flag;
+      
+      return;
     
 
 }
 void get_domain(char *email,int n,int *res);
-int validate_unique_email(AddressBook *addressBook,char *email);
+void validate_unique_email(AddressBook *addressBook,char *email,int *uniq);
 void get_validateemail(AddressBook *addressBook,char *email,int *res2){
         int i=0;
         if(email[0]>='a'&&email[0]<='z'||email[0]>='0'&&email[0]<='9'){//check first charcacter
@@ -270,7 +276,8 @@ void get_email(AddressBook *addressBook,char *email){
                       count++;
                      }
                      else{
-                      int uniq=validate_unique_email(addressBook,email);
+                      int uniq=0;
+                      validate_unique_email(addressBook,email,&uniq);
                       if(uniq){
                       strcpy(addressBook->contacts[addressBook->contactCount].email,email);
                        printf("email is added\n");
@@ -279,8 +286,9 @@ void get_email(AddressBook *addressBook,char *email){
                        return;
                        } 
                     else{
-                      printf("email is already exist\n");
-                      return;
+                      //printf("email is already exist\n");
+                      count++;
+                      
                 }
               }
               
@@ -291,20 +299,23 @@ void get_email(AddressBook *addressBook,char *email){
 }
 
 
-int validate_unique_email(AddressBook *addressBook,char *email){
+void validate_unique_email(AddressBook *addressBook,char *email,int *uniq){
       
       int flag=1;//comparing any existing email number
       for(int i=0;i<addressBook->contactCount;i++){
         if(strcmp(addressBook->contacts[i].email,email)==0){
+          *uniq=0;
           flag=0;
+          printf("email id is matching\n");
           break;
         }
-        else{
-          flag;
+      }
+        if(flag){
+          *uniq=1;
         }
 
-      }
-      return flag;
+      
+      return;
  }
 
 void searchContact(AddressBook *addressBook,int *edit,int *index1,int *duplicate) 
@@ -333,7 +344,6 @@ void searchContact(AddressBook *addressBook,int *edit,int *index1,int *duplicate
                int no=1;
                int i=0;
                 if(res!=0){
-              
                   int found=0;
                   for(int i=0;i<addressBook->contactCount;i++){
                     if(strstr(addressBook->contacts[i].name,name)!=NULL)
@@ -342,11 +352,11 @@ void searchContact(AddressBook *addressBook,int *edit,int *index1,int *duplicate
                     }
                   }
                   if(found==1){
-                    printf("%20s\n","----------------List of Contacts-------------");
-                   printf("%10s %10s %20s %20s %15s\n", "serial no","index" , "Name", "Phone", "Email");
+                    printf("%50s\n","----------------List of Contacts-------------");
+                   printf("%-10s %-10s %-20s %-20s %-15s\n", "serial no","index" , "Name", "Phone", "Email");
                     for(int i=0;i<addressBook->contactCount;i++){
                     if(strstr(addressBook->contacts[i].name,name)!=NULL){
-                    printf("%10d %10d %20s %20s %30s\n",i+1,i,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
+                    printf("%-10d %-10d %-20s %-20s %-15s\n",i+1,i,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
            
                     *edit=1;//search contact is founded next is to edit
                     *index1=i;// it returning the index not serial number index=serial-1
@@ -380,20 +390,31 @@ void searchContact(AddressBook *addressBook,int *edit,int *index1,int *duplicate
              count++;
              continue;
                }
-                else{
+                else if(res1!=0){
+                  int found=0;
+                  for(int i=0;i<addressBook->contactCount;i++){
+                    if(strstr(addressBook->contacts[i].phone,phone)!=NULL)
+                    {
+                      found=1;
+                    }
+                  }
+                   if(found==1){
                      for(int i=0;i<addressBook->contactCount;i++){
                      if(strstr(addressBook->contacts[i].phone,phone)!=NULL){
                     printf("------------List of Contacts--------- \n");
-                    printf("%10s %10s %20s %15s\n", "contacts",  "Name", "Phone", "Email");
-                    printf("%10d %10s %20s %30s\n",i+1,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
+                    printf("%-10s %-20s %-20s %-15s\n", "serial no",  "Name", "Phone", "Email");
+                    printf("%-10d %-20s %-20s %-15s\n",i+1,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
                      *edit=1;
+                     break;
                   }
+                }
+                return;
+              }
                   else{
                     printf("contact not found\n");
                     count++;
-                    return;
+                    //return;
                   }
-                }
                  return;
               }
             }while(count<3);
@@ -409,21 +430,32 @@ void searchContact(AddressBook *addressBook,int *edit,int *index1,int *duplicate
               count++;
               continue;
              }
-             else{
+             else if (res2!=0){
+                  int found=0;
+                  for(int i=0;i<addressBook->contactCount;i++){
+                    if(strstr(addressBook->contacts[i].email,email)!=NULL)
+                    {
+                      found=1;
+                    }
+                  }
+                   if(found==1){
                      for(int i=0;i<addressBook->contactCount;i++){
                      if(strstr(addressBook->contacts[i].email,email)!=NULL){
                     printf("------------List of Contacts--------- \n");
-                    printf("%10s %10s %20s %15s\n", "contacts",  "Name", "Phone", "Email");
-                    printf("%10d %10s %20s %30s\n",i+1,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
+                    printf("%-10s %-20s %-20s %-15s\n", "serial no",  "Name", "Phone", "Email");
+                    printf("%-10d %-20s %-20s %-15s\n",i+1,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
+                     *edit=1;//it continues to stat loop in edit function
                      break;
                   }
+                }
+                return;
+              }
                   else{
                     printf("contact not found\n");
                     count++;
-                    return;
+                    //return;
                   }
-                }
-                return; 
+                 return;
               }
             }while(count<3);
            break;
@@ -445,11 +477,13 @@ void editContact(AddressBook *addressBook)
    int count=0;
    int index1=0;
    int duplicate=0;
-  searchContact(addressBook,&edit,&index1,&duplicate); 
-  do{
+   int unique=0;
+   searchContact(addressBook,&edit,&index1,&duplicate); //if we use it within the do loop the duplicate count increases
+   //if the user entered the matching number or email it goes to main menu
+   do{
   if(edit==1){
     printf("\n");
-    printf("----you can see list of contacts choose which field u want to update \n");
+    printf("----choose which contact field u want to update \n");
     printf("%50s\n","name         -- choice--1");
     printf("%50s\n","phone number ---choice--2");
     printf("%50s\n","email id     ---choice--3");
@@ -486,33 +520,70 @@ void editContact(AddressBook *addressBook)
                 count++;
                }
               }
-               return;
+               break;
           case 2:
-              printf("enter the phone number to update:-\n");
-              scanf(" %[^\n]",phone);
-              get_validatephone(addressBook,phone,&res);//here validating entered phone number
-              if(res==1){
-             int res=get_validate(addressBook,phone);
-             if(res){
-                printf("enter index to update:- \n");
+              if(duplicate>1){
+                printf("there are duplicates contacts with name\n");
+                printf("enter index to update:-\n");
                 scanf("%d",&index1);
-               strcpy(addressBook->contacts[index1-1].phone,phone);
-              printf("successfully contact updated\n");
+                printf("enter the phone number to update:-\n");
+                scanf(" %[^\n]",phone);
+                get_validatephone(addressBook,phone,&res);//here validating entered phone number
+                get_validate(addressBook,phone,&res);//checking uniqueness of entered phone number
+              if(res==1){
+               strcpy(addressBook->contacts[index1].phone,phone);
+               printf("successfully contact updated\n");
                 }
-                else{
-                  strcpy(addressBook->contacts[index1].phone,phone);
-                  printf("successfully contact updated\n");
-                }
-              return;
+               else{
+                count++;
+               }
               }
               else{
+                printf("enter the phone number to update:-\n");
+                scanf(" %[^\n]",phone);
+               get_validatephone(addressBook,phone,&res);//check entered name is valid or not
+               get_validate(addressBook,phone,&res); 
+               if(res==1){
+                strcpy(addressBook->contacts[index1].phone,phone);
+                  printf("successfully contact updated\n");
+               }
+               else{
                 count++;
+               }
               }
-              return;
-             break;
+               break;//want more trials use break
+               //using break cant search again contact details and list not shown
           case 3:
-           printf("email edit\n");
-           break;
+           if(duplicate>1){
+                printf("there are duplicates contacts with name\n");
+                printf("enter index to update:-\n");
+                scanf("%d",&index1);
+                printf("enter the email id to update:-\n");
+                scanf(" %[^\n]",email);
+                get_validateemail(addressBook,email,&res);//here validating entered phone number
+                validate_unique_email(addressBook,email,&res);//check uniqness
+              if(res==1){
+               strcpy(addressBook->contacts[index1].email,email);
+               printf("successfully contact updated\n");
+                }
+               else{
+                count++;
+               }
+              }
+              else{
+                printf("enter the email id to update:-\n");
+                scanf(" %[^\n]",email);
+               get_validateemail(addressBook,email,&res);//check entered phone is valid or not
+               validate_unique_email(addressBook,email,&res);//check for uniqueness
+               if(res==1){
+                strcpy(addressBook->contacts[index1].email,email);
+                  printf("successfully contact updated\n");
+               }
+               else{
+                count++;
+               }
+              }
+               break;
           
            default :
            count++;
