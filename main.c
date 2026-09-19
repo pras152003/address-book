@@ -2,13 +2,14 @@
 #include "contact.h"
 
 int edit=0;
-int index=0;
+int index1=0;
+int duplicate=0;
 int main() 
 {
     int choice;
     AddressBook addressBook;
     initialize(&addressBook); // Initialize the address book
-
+   int count=0;
     do 
     {
         printf("\nAddress Book Menu:\n");
@@ -28,7 +29,7 @@ int main()
                 createContact(&addressBook);
                 break;
             case 2:
-                searchContact(&addressBook,&edit,&index);
+                searchContact(&addressBook,&edit,&index1,&duplicate);
                 break;
             case 3:
                 editContact(&addressBook);
@@ -45,8 +46,10 @@ int main()
                 break;
             default:
                 printf("Invalid choice. Please try again.\n");
+                count++;//if we read any alpha going infinty times 
+                break;
         }
-    } while (choice != 6);
+    } while (count <= 6);
     
     
     return 0;

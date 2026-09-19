@@ -10,11 +10,8 @@ void listContacts(AddressBook *addressBook)
     // Sort contacts based on the chosen criteria
     printf("------------List of Contacts--------- \n");
     printf("%-10s %-10s %-20s %s\n", "contacts",  "Name", "Phone", "Email");
-    int num=1;
     for(int i=0;i<addressBook->contactCount;i++){
-      
-      printf("%-10d %-10s %-20s %s\n",num,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
-      num++;
+      printf("%-10d %-10s %-20s %s\n",i+1,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
     }
     
 }
@@ -150,7 +147,7 @@ int get_validate(AddressBook *addressBook,char *phone){
       int flag=1;//comparing any existing phone number
       for(int i=0;i<addressBook->contactCount;i++){
         if(strcmp(addressBook->contacts[i].phone,phone)==0){
-          flag=0;
+          flag=0;//phone number is matching
           break;
         }
         else{
@@ -310,7 +307,7 @@ int validate_unique_email(AddressBook *addressBook,char *email){
       return flag;
  }
 
-void searchContact(AddressBook *addressBook,int *edit,int *index) 
+void searchContact(AddressBook *addressBook,int *edit,int *index1,int *duplicate) 
 {
     /* Define the logic for search */
     char name[50];
@@ -334,26 +331,38 @@ void searchContact(AddressBook *addressBook,int *edit,int *index)
                
                get_validatename(addressBook,name,&res);
                int no=1;
+               int i=0;
                 if(res!=0){
-                  printf("%20s\n","----------------List of Contacts-------------");
-                  printf("%10s %10s %20s %15s\n", "contact serial",  "Name", "Phone", "Email");
+              
                   int found=0;
                   for(int i=0;i<addressBook->contactCount;i++){
-                    int found = strstr(addressBook->contacts[i].name,name)!=NULL;
-                  if(found){
-                    *index=i;
-                    printf("%10d %10s %20s %30s\n",i+1,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
-                    *edit=1;
-                    
+                    if(strstr(addressBook->contacts[i].name,name)!=NULL)
+                    {
+                      found=1;
                     }
+                  }
+                  if(found==1){
+                    printf("%20s\n","----------------List of Contacts-------------");
+                   printf("%10s %10s %20s %20s %15s\n", "serial no","index" , "Name", "Phone", "Email");
+                    for(int i=0;i<addressBook->contactCount;i++){
+                    if(strstr(addressBook->contacts[i].name,name)!=NULL){
+                    printf("%10d %10d %20s %20s %30s\n",i+1,i,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
+           
+                    *edit=1;//search contact is founded next is to edit
+                    *index1=i;// it returning the index not serial number index=serial-1
+                     (*duplicate)++;
                 }
-                  if(found!=0){
+               
+              }
+              return;
+            }
+                  else{
                     printf("contact not found\n");
                     count++;
-                    break;
+                  //break;
                   }
                 
-                return;
+               // return;
                 }
                 else{
                   count++;
@@ -372,13 +381,12 @@ void searchContact(AddressBook *addressBook,int *edit,int *index)
              continue;
                }
                 else{
-                  int no=1;
                      for(int i=0;i<addressBook->contactCount;i++){
                      if(strstr(addressBook->contacts[i].phone,phone)!=NULL){
                     printf("------------List of Contacts--------- \n");
                     printf("%10s %10s %20s %15s\n", "contacts",  "Name", "Phone", "Email");
-                    printf("%10d %10s %20s %30s\n",no++,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
-                     break;
+                    printf("%10d %10s %20s %30s\n",i+1,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
+                     *edit=1;
                   }
                   else{
                     printf("contact not found\n");
@@ -386,7 +394,7 @@ void searchContact(AddressBook *addressBook,int *edit,int *index)
                     return;
                   }
                 }
-                return; 
+                 return;
               }
             }while(count<3);
             break;
@@ -402,12 +410,11 @@ void searchContact(AddressBook *addressBook,int *edit,int *index)
               continue;
              }
              else{
-                  int no=1;
                      for(int i=0;i<addressBook->contactCount;i++){
                      if(strstr(addressBook->contacts[i].email,email)!=NULL){
                     printf("------------List of Contacts--------- \n");
                     printf("%10s %10s %20s %15s\n", "contacts",  "Name", "Phone", "Email");
-                    printf("%10d %10s %20s %30s\n",no++,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
+                    printf("%10d %10s %20s %30s\n",i+1,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
                      break;
                   }
                   else{
@@ -436,34 +443,72 @@ void editContact(AddressBook *addressBook)
   char email[50];
    int edit=0;
    int count=0;
-   int index=0;
-  searchContact(addressBook,&edit,&index); 
+   int index1=0;
+   int duplicate=0;
+  searchContact(addressBook,&edit,&index1,&duplicate); 
   do{
   if(edit==1){
-    printf("--which field you want to edit choose\n");
-    printf("edit by name----1\n");
-    printf("edit by phone number\n");
-    printf("edit by email id\n");
+    printf("\n");
+    printf("----you can see list of contacts choose which field u want to update \n");
+    printf("%50s\n","name         -- choice--1");
+    printf("%50s\n","phone number ---choice--2");
+    printf("%50s\n","email id     ---choice--3");
     int num;
     int res=0;
+    printf("enter your choice:-\n");
     scanf("%d",&num);
-    switch(num){
+    switch(num){             //updgradation section
           case 1:
-              printf("enter the name to update\n");
-              scanf(" %[^\n]",name);
-               get_validatename(addressBook,name,&res);
+               if(duplicate>1){
+                printf("there are duplicates contacts with name\n");
+                printf("enter index to update:-\n");
+                scanf("%d",&index1);
+                printf("enter the name to update:-\n");
+                scanf(" %[^\n]",name);
+               get_validatename(addressBook,name,&res);//check entered name is valid or not 
                if(res==1){
-               strcpy(addressBook->contacts[index].name,name);
-              printf("successfully contact updated\n");
-              return;
+               strcpy(addressBook->contacts[index1].name,name);
+               printf("successfully contact updated\n");
+                }
+               else{
+                count++;
+               }
+              }
+              else{
+                printf("enter the name to update:-\n");
+                scanf(" %[^\n]",name);
+               get_validatename(addressBook,name,&res);//check entered name is valid or not 
+               if(res==1){
+                strcpy(addressBook->contacts[index1].name,name);
+                  printf("successfully contact updated\n");
                }
                else{
                 count++;
-                
                }
+              }
                return;
           case 2:
-             printf("phone number edit\n");
+              printf("enter the phone number to update:-\n");
+              scanf(" %[^\n]",phone);
+              get_validatephone(addressBook,phone,&res);//here validating entered phone number
+              if(res==1){
+             int res=get_validate(addressBook,phone);
+             if(res){
+                printf("enter index to update:- \n");
+                scanf("%d",&index1);
+               strcpy(addressBook->contacts[index1-1].phone,phone);
+              printf("successfully contact updated\n");
+                }
+                else{
+                  strcpy(addressBook->contacts[index1].phone,phone);
+                  printf("successfully contact updated\n");
+                }
+              return;
+              }
+              else{
+                count++;
+              }
+              return;
              break;
           case 3:
            printf("email edit\n");
