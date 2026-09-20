@@ -8,19 +8,24 @@
 void listContacts(AddressBook *addressBook) 
 {
     // Sort contacts based on the chosen criteria
+    if(addressBook->contactCount>=1){
     printf("%60s","------------List of Contacts--------- \n");
     printf("%-10s %-20s %-15s %-25s\n", "contacts",   "Name", "Phone", "Email");
     for(int i=0;i<addressBook->contactCount;i++){
       printf("%-10d %-20s %-15s %-25s\n",i+1,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
     }
+  }
+  else{
+    printf("%60s","---------THE ADDRESSBOOK IS EMPTY----------\n");
+  }
     
 }
 
 void initialize(AddressBook *addressBook) {
     addressBook->contactCount = 0;
+  
     
-    
-    //loadContactsFromFile(addressBook);
+    loadContactsFromFile(addressBook);
 }
 
 void saveAndExit(AddressBook *addressBook) {
@@ -325,6 +330,7 @@ void searchContact(AddressBook *addressBook,int *edit,int *duplicate,int *indexa
     char phone[50];
     char email[50];
      int count=0;
+     if(addressBook->contactCount>=1){
     do{
       printf("%39s\n","search by name enter 1");
       printf("%40s\n","search by phone enter 2");
@@ -465,8 +471,14 @@ void searchContact(AddressBook *addressBook,int *edit,int *duplicate,int *indexa
             count++;
             break;
              
-              }        
-             } while(count<1);
+              
+        }  
+
+     }while(count<1);
+    }
+    else{
+      printf("-----ADDRESSBOOK is empty-------\n");
+    }
 }
 
 void editContact(AddressBook *addressBook)
@@ -480,7 +492,7 @@ void editContact(AddressBook *addressBook)
    int unique=0;
    int indexarr[100];
    int index1=0;
-   printf("-----------search contact to edit---------\n");
+   //printf("-----------search contact to edit---------\n");
    searchContact(addressBook,&edit,&duplicate,indexarr,&index1); //if we use it within the do loop the duplicate count increases
    //if the user entered the matching number or email it goes to main menu
    do{
@@ -645,7 +657,7 @@ void deleteContact(AddressBook *addressBook)
    int duplicate=0;
    int confirm=0;
    int indexarr[100];
-   printf("----------------search contact to delete--------------\n");
+   //printf("----------------search contact to delete--------------\n");
    searchContact(addressBook,&edit,&duplicate,indexarr,&index1); //if we use it within the do loop the duplicate count increases
    do{
      if(edit==1){

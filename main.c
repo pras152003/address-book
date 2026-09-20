@@ -30,7 +30,7 @@ int main()
                 createContact(&addressBook);
                 break;
             case 2:
-                printf("%20s\n","----------------Search Contact----------------");
+                //printf("%20s\n","----------------Search Contact----------------");
                 searchContact(&addressBook,&edit,&duplicate,indexarr,&index1);
                 break;
             case 3:
@@ -43,9 +43,11 @@ int main()
                 listContacts(&addressBook);
                 break;
             case 6:
+                
                 printf("Saving and Exiting...\n");
-                //saveContactsToFile(&addressBook);
+                saveContactsToFile(&addressBook);
                 break;
+                  
             default:
                 printf("Invalid choice. Please try again.\n");
                 count++;//if we read any alpha going infinty times 
