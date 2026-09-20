@@ -2,8 +2,9 @@
 #include "contact.h"
 
 int edit=0;
-int index1=0;
 int duplicate=0;
+int indexarr[100];
+int index1=0;
 int main() 
 {
     int choice;
@@ -29,7 +30,8 @@ int main()
                 createContact(&addressBook);
                 break;
             case 2:
-                searchContact(&addressBook,&edit,&index1,&duplicate);
+                printf("%20s\n","----------------Search Contact----------------");
+                searchContact(&addressBook,&edit,&duplicate,indexarr,&index1);
                 break;
             case 3:
                 editContact(&addressBook);

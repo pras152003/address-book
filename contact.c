@@ -318,7 +318,7 @@ void validate_unique_email(AddressBook *addressBook,char *email,int *uniq){
       return;
  }
 
-void searchContact(AddressBook *addressBook,int *edit,int *index1,int *duplicate) 
+void searchContact(AddressBook *addressBook,int *edit,int *duplicate,int *indexarr,int *index1) 
 {
     /* Define the logic for search */
     char name[50];
@@ -326,10 +326,9 @@ void searchContact(AddressBook *addressBook,int *edit,int *index1,int *duplicate
     char email[50];
      int count=0;
     do{
-      printf("%20s\n","----------------Search Contact----------------");
-      printf("%39s\n","by name enter 1");
-      printf("%40s\n","by phone enter 2");
-      printf("%40s\n","by email enter 3");
+      printf("%39s\n","search by name enter 1");
+      printf("%40s\n","search by phone enter 2");
+      printf("%40s\n","search by email enter 3");
       int num;
       printf("enter your choice:- \n");
       scanf("%d",&num);
@@ -353,14 +352,16 @@ void searchContact(AddressBook *addressBook,int *edit,int *index1,int *duplicate
                   }
                   if(found==1){
                     printf("%50s\n","----------------List of Contacts-------------");
-                   printf("%-10s %-10s %-20s %-20s %-15s\n", "serial no","index" , "Name", "Phone", "Email");
+                    printf("%-10s %-20s %-15s %-25s\n", "serial NO",   "Name", "Phone", "Email");
+                    int no=1;
                     for(int i=0;i<addressBook->contactCount;i++){
                     if(strstr(addressBook->contacts[i].name,name)!=NULL){
-                    printf("%-10d %-10d %-20s %-20s %-15s\n",i+1,i,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
-           
+                      (*duplicate)++;
+                      indexarr[*duplicate-1]=i;
+                    printf("%-10d %-20s %-15s %-25s\n",*duplicate,addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);
+                    *index1=i;
                     *edit=1;//search contact is founded next is to edit
-                    *index1=i;// it returning the index not serial number index=serial-1
-                     (*duplicate)++;
+
                 }
                
               }
@@ -475,10 +476,12 @@ void editContact(AddressBook *addressBook)
   char email[50];
    int edit=0;
    int count=0;
-   int index1=0;
    int duplicate=0;
    int unique=0;
-   searchContact(addressBook,&edit,&index1,&duplicate); //if we use it within the do loop the duplicate count increases
+   int indexarr[100];
+   int index1=0;
+   printf("-----------search contact to edit---------\n");
+   searchContact(addressBook,&edit,&duplicate,indexarr,&index1); //if we use it within the do loop the duplicate count increases
    //if the user entered the matching number or email it goes to main menu
    do{
   if(edit==1){
@@ -494,27 +497,40 @@ void editContact(AddressBook *addressBook)
     switch(num){             //updgradation section
           case 1:
                if(duplicate>1){
+                int index1=0;
                 printf("there are duplicates contacts with name\n");
-                printf("enter index to update:-\n");
+                printf("enter serial number to update:-\n");
                 scanf("%d",&index1);
+                if(index1>=1&&index1<=duplicate){
                 printf("enter the name to update:-\n");
                 scanf(" %[^\n]",name);
                get_validatename(addressBook,name,&res);//check entered name is valid or not 
                if(res==1){
+                index1=indexarr[index1-1];//getting the index of contact to update
                strcpy(addressBook->contacts[index1].name,name);
                printf("successfully contact updated\n");
+               return;
                 }
+              
                else{
                 count++;
                }
+              }
+              else{
+                printf("invalid index number\n");
+                count++;
+              }
+              
               }
               else{
                 printf("enter the name to update:-\n");
                 scanf(" %[^\n]",name);
                get_validatename(addressBook,name,&res);//check entered name is valid or not 
                if(res==1){
+
                 strcpy(addressBook->contacts[index1].name,name);
                   printf("successfully contact updated\n");
+                  return;
                }
                else{
                 count++;
@@ -524,19 +540,27 @@ void editContact(AddressBook *addressBook)
           case 2:
               if(duplicate>1){
                 printf("there are duplicates contacts with name\n");
-                printf("enter index to update:-\n");
+                printf("enter serial number to update:-\n");
                 scanf("%d",&index1);
+                if(index1>=1&&index1<=duplicate){
                 printf("enter the phone number to update:-\n");
                 scanf(" %[^\n]",phone);
                 get_validatephone(addressBook,phone,&res);//here validating entered phone number
                 get_validate(addressBook,phone,&res);//checking uniqueness of entered phone number
               if(res==1){
+                index1=indexarr[index1-1];
                strcpy(addressBook->contacts[index1].phone,phone);
                printf("successfully contact updated\n");
+               return;
                 }
                else{
                 count++;
                }
+              }
+              else{
+                printf("invalid index\n");
+                count++;
+              }
               }
               else{
                 printf("enter the phone number to update:-\n");
@@ -546,6 +570,7 @@ void editContact(AddressBook *addressBook)
                if(res==1){
                 strcpy(addressBook->contacts[index1].phone,phone);
                   printf("successfully contact updated\n");
+                  return;
                }
                else{
                 count++;
@@ -556,19 +581,27 @@ void editContact(AddressBook *addressBook)
           case 3:
            if(duplicate>1){
                 printf("there are duplicates contacts with name\n");
-                printf("enter index to update:-\n");
+                printf("enter serial number to update:-\n");
                 scanf("%d",&index1);
+                if(index1>=1&&index1<=duplicate){
                 printf("enter the email id to update:-\n");
                 scanf(" %[^\n]",email);
                 get_validateemail(addressBook,email,&res);//here validating entered phone number
                 validate_unique_email(addressBook,email,&res);//check uniqness
               if(res==1){
+                index1=indexarr[index1-1];
                strcpy(addressBook->contacts[index1].email,email);
                printf("successfully contact updated\n");
+               return;
                 }
                else{
                 count++;
                }
+              }
+              else{
+                printf("invalid index\n");
+                count++;
+              }
               }
               else{
                 printf("enter the email id to update:-\n");
@@ -578,6 +611,7 @@ void editContact(AddressBook *addressBook)
                if(res==1){
                 strcpy(addressBook->contacts[index1].email,email);
                   printf("successfully contact updated\n");
+                  return;
                }
                else{
                 count++;
@@ -602,6 +636,66 @@ void editContact(AddressBook *addressBook)
 void deleteContact(AddressBook *addressBook)
 {
 	/* Define the logic for deletecontact */
+   char name[50];
+  char phone[50];
+  char email[50];
+   int edit=0;
+   int count=0;
+   int index1=0;
+   int duplicate=0;
+   int confirm=0;
+   int indexarr[100];
+   printf("----------------search contact to delete--------------\n");
+   searchContact(addressBook,&edit,&duplicate,indexarr,&index1); //if we use it within the do loop the duplicate count increases
+   do{
+     if(edit==1){
+      if(duplicate>1){
+        printf("We Found a duplicates in contacts\n");
+        printf("Enter serial number to delete contact\n");
+        scanf("%d",&index1);
+        if(index1>=1&&index1<=duplicate){
+        printf("Are you sure to delete contact\n");
+        printf("for confirmation enter 1\n");
+        scanf("%d",&confirm);
+        if(confirm){
+          int index1=indexarr[index1-1];
+          for(int i=index1;i<addressBook->contactCount;i++){
+          addressBook->contacts[i]=addressBook->contacts[i+1];
+          }
+          addressBook->contactCount--;
+          printf("contact deleted\n");
+          return;
+        }
+        else{
+          printf("confirmation failed\n");
+          count++;
+        }
+      }
+      else{
+         printf("invalid index\n");
+         count++;
+      }
+    }
+      else{
+        printf("Are you sure to delete contact\n");
+        printf("for confirmation enter 1\n");
+        scanf("%d",&confirm);
+        if(confirm){
+          for(int i=index1;i<addressBook->contactCount;i++){
+          addressBook->contacts[i]=addressBook->contacts[i+1];
+          }
+          addressBook->contactCount--;
+          printf("contact deleted\n");
+          return;
+        }
+        else{
+          printf("confirmation failed\n");
+          count++;
+        }
+      }
+     }
+     return;
+   }while(count<=3);
    
 }
 
