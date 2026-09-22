@@ -31,6 +31,4 @@ The `count` variable is used to track the number of failed attempts.
 ## 3. Name Input and Validation
 
 The contact name is taken using:
-
-```c
 scanf(" %[^\n]", addressBook->contacts->name);//space in scanf which skips newline left in input buffer

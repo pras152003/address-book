@@ -20,7 +20,7 @@ int main()
         printf("4. Delete contact\n");
         printf("5. List all contacts\n");
     	printf("6. Save and Exit\n");		
-        // printf("7. Exit\n");
+        printf("7. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
         
@@ -44,10 +44,14 @@ int main()
                 break;
             case 6:
                 
-                printf("Saving and Exiting...\n");
-                saveContactsToFile(&addressBook);
+               // printf("Saving and Exiting...\n");
+                saveAndExit(&addressBook);
                 break;
-                  
+            case 7:
+                //printf("Exiting without saving...\n");
+                exitfunction(&addressBook);
+                
+                break;    
             default:
                 printf("Invalid choice. Please try again.\n");
                 count++;//if we read any alpha going infinty times 

@@ -21,6 +21,11 @@ void listContacts(AddressBook *addressBook)
     
 }
 
+void exitfunction(AddressBook *addressBook){
+  //saveContactsToFile(addressBook);
+  printf("exiting without saving\n");
+  exit(EXIT_SUCCESS);
+}
 void initialize(AddressBook *addressBook) {
     addressBook->contactCount = 0;
   
@@ -29,7 +34,9 @@ void initialize(AddressBook *addressBook) {
 }
 
 void saveAndExit(AddressBook *addressBook) {
+  printf("Saving and Exiting...\n");
     saveContactsToFile(addressBook); // Save contacts to file
+    printf("contacts saved successfully\n");
     exit(EXIT_SUCCESS); // Exit the program
 }
 
@@ -59,7 +66,7 @@ void createContact(AddressBook *addressBook)
 
     
   }while(count<3);
-      
+  exit(EXIT_SUCCESS);  
     
 }
     
@@ -147,6 +154,7 @@ void get_phone(AddressBook *addressBook,char *phone){
                 
         
   }while(count<3);
+   exit(EXIT_SUCCESS); 
 }
 
 
@@ -178,7 +186,7 @@ void get_validateemail(AddressBook *addressBook,char *email,int *res2){
         int flag=1;                                        //check for first charcter
         while(email[i]!='\0'){                      
              if(!(email[i]>='A'&&email[i]<='Z')){        //email should not contain any uppercase
-               flag=1;
+              flag=1;
                i++;
              }
              else{
@@ -186,6 +194,18 @@ void get_validateemail(AddressBook *addressBook,char *email,int *res2){
                 *res2=0;
                 return;
              }
+        }
+        int i=0;
+        while(email[i]!='@'){
+          if(email[i]=='.'){
+            printf("email should not contain . before @\n");
+            *res2=0;
+            return;
+          }
+          else{
+            i++;
+            flag=1;
+          }
         }
         if(flag==1){                                    //now whole array not with any upper case
             int atcount=0; // traverse whole string to count @
@@ -204,10 +224,10 @@ void get_validateemail(AddressBook *addressBook,char *email,int *res2){
             if(atcount==1){        //check for .com             
               int atdotcom=0;
               char *ptr=email;
-              while((ptr=strstr(ptr,".com"))!=NULL){//!=NULL .com is present
-                atdotcom++;
-                ptr++;
-                 }
+              while((ptr=strstr(ptr,".com"))!=NULL){//(!=NULL) .com is present  ==null .com is not present
+                atdotcom++;//counting .com
+                ptr++;//incrementing ptr to search for next .com
+                 }//it is increminting *(ptr+1*sizeof char)
     
                   if(atdotcom==1){
                  int i=atposition+1;//i points to 1 point after @
@@ -217,8 +237,15 @@ void get_validateemail(AddressBook *addressBook,char *email,int *res2){
                   i++;
                   }
                   if(charc>=5){
-                  *res2=1;
-                  return;
+                char *ptr = strstr(email, ".com");//it holding adress of '.' charcater
+                  if(ptr[4]=='\0'){// *(ptr+4 *sizeof char)
+                    *res2=1;
+                     return;
+                     }
+                     else{
+                      printf("after .com should not contain any character\n");
+                      *res2=0;
+                     }
                     }
               else{
                   printf("invalid domain\n");
@@ -335,6 +362,7 @@ void searchContact(AddressBook *addressBook,int *edit,int *duplicate,int *indexa
       printf("%39s\n","search by name enter 1");
       printf("%40s\n","search by phone enter 2");
       printf("%40s\n","search by email enter 3");
+      printf("%40s\n","to exit enter 4");
       int num;
       printf("enter your choice:- \n");
       scanf("%d",&num);
@@ -466,6 +494,9 @@ void searchContact(AddressBook *addressBook,int *edit,int *duplicate,int *indexa
               }
             }while(count<3);
            break;
+        case 4:
+            exitfunction(addressBook);
+            return;
         default:
             printf("invalid choice\n");
             count++;
@@ -475,6 +506,8 @@ void searchContact(AddressBook *addressBook,int *edit,int *duplicate,int *indexa
         }  
 
      }while(count<1);
+     printf("-----search contact failed-----\n");
+      exit(EXIT_SUCCESS); 
     }
     else{
       printf("-----ADDRESSBOOK is empty-------\n");
@@ -502,6 +535,7 @@ void editContact(AddressBook *addressBook)
     printf("%50s\n","name         -- choice--1");
     printf("%50s\n","phone number ---choice--2");
     printf("%50s\n","email id     ---choice--3");
+    printf("%50s\n","to exit      ---choice--4");
     int num;
     int res=0;
     printf("enter your choice:-\n");
@@ -631,6 +665,10 @@ void editContact(AddressBook *addressBook)
               }
                break;
           
+            case 4:
+                exitfunction(addressBook);
+            return;
+
            default :
            count++;
             printf("invalid input\n");
@@ -643,6 +681,8 @@ void editContact(AddressBook *addressBook)
   }
    
 }while(count<3);
+printf("-----edit contact failed-----\n");
+exit(EXIT_SUCCESS);
 }
 
 void deleteContact(AddressBook *addressBook)
@@ -708,6 +748,8 @@ void deleteContact(AddressBook *addressBook)
      }
      return;
    }while(count<=3);
+   printf("-----delete contact failed-----\n");
+   exit(EXIT_SUCCESS);
    
 }
 
