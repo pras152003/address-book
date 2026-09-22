@@ -185,7 +185,7 @@ void get_validateemail(AddressBook *addressBook,char *email,int *res2){
         if(email[0]>='a'&&email[0]<='z'||email[0]>='0'&&email[0]<='9'){//check first charcacter
         int flag=1;                                        //check for first charcter
         while(email[i]!='\0'){                      
-             if(!(email[i]>='A'&&email[i]<='Z')){        //email should not contain any uppercase
+             if(!(email[i]>='A'&&email[i]<='Z')){        //email should not contain any uppercase             
               flag=1;
                i++;
              }
@@ -197,14 +197,17 @@ void get_validateemail(AddressBook *addressBook,char *email,int *res2){
         }
         int i=0;
         while(email[i]!='@'){
-          if(email[i]=='.'){
-            printf("email should not contain . before @\n");
-            *res2=0;
-            return;
-          }
-          else{
+          if((email[i]!='.')&&(email[i]>='a'&&email[i]<='z'||email[i]>='0'&&email[i]<='9')){
             i++;
             flag=1;
+          }
+          else{
+               
+            printf("email should not contain . before @ and not any special characters\n");
+            *res2=0;
+                i++;      
+            return;
+          
           }
         }
         if(flag==1){                                    //now whole array not with any upper case
@@ -233,8 +236,15 @@ void get_validateemail(AddressBook *addressBook,char *email,int *res2){
                  int i=atposition+1;//i points to 1 point after @
                   int charc=0;
                   while(email[i]!='.'){
+                    if(email[i]>='a'&&email[i]<='z'){
                   charc++;
                   i++;
+                    }
+                    else{
+                      printf("domain should not contain any special characters\n");
+                      *res2=0;
+                      return;
+                    }
                   }
                   if(charc>=5){
                 char *ptr = strstr(email, ".com");//it holding adress of '.' charcater

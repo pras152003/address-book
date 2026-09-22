@@ -26,7 +26,7 @@ void loadContactsFromFile(AddressBook *addressBook) {
     if (fptr != NULL)
     {
         fscanf(fptr, "#%d\n", &addressBook->contactCount);
-        // Read contacts
+        // Read contacts from file 
         for (int i = 0; i < addressBook->contactCount; i++)
         {
             fscanf(fptr, "%*d, %[^,], %[^,], %[^\n]\n",addressBook->contacts[i].name,addressBook->contacts[i].phone,addressBook->contacts[i].email);

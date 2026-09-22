@@ -1,34 +1,55 @@
-# Address Book in C
+read me
 
-A command-line Address Book project developed in C. The project was provided with a basic skeleton, and the functionality is being implemented step-by-step by developing and validating each block of the program.
+ -->>   using do while loop for atleast run once to show menu for input fields or selection of menu
+-->>    using of selective scanf( %[^\n])  to read spaces if thier in name and for avoiding            newline character living space
 
-## 1. Overall Program Flow
 
-The `main()` function contains the main control flow of the Address Book.
+---------------create contact-------------
+->> enter name through user
+    1. before moving to get phone number validate it should start with alpabet or digit not any special characters
+ 
+     3 chances for user to enter correct name
 
-- A `do-while` loop is used so that the menu runs at least once.
-- The menu displays the available operations.
-- A `switch` statement is used to select the operation based on the user's choice.
-- The operations include creating, searching, editing, deleting, and listing contacts.
+-->> phone number input and validation 
+     1. it should start with 6/7/8/9
+     2. contains 10 digits only not other characters
+     3. unique phone number
+      again 3 chances 
 
-The functionality is being implemented one block at a time.
 
-## 2. Create Contact
+-->>  email input and validation
+     first char should be lower alpa or digit
+     should not contain an upper case through out email id
+     should contain @ .com once 
+     '.' should come after '@'
+     unique email id
+    no special characters expect @ '.'
 
-The first functionality implemented is `createContact()`.
+--------------save contact and increse count-----------
 
-The contact details are taken from the user and validated before accepting them.
+------------------search count-----------
 
-The validation is currently implemented for:
+-->>   3 ways to search contact    common function where we use in edit and delete to search contact
+   searching contact with validation
+      by name
+             if any duplicates list all macthing contacts
+      by phone   
+      by email
 
-1. Contact name
-2. Phone number
 
-Each validation block allows the user a maximum of three attempts.
+-->>edit contact 
+     search by name phone email
+     edit phone/name/email
+     validation every field before updating
+     update contact
+    
+-->>  delete contact
+     search by name phone email
+     confirmation of delete and swap next contact to pre one and reduce contact size
 
-The `count` variable is used to track the number of failed attempts.
+-->> saving file to csv file     comma separtor value
+    csv act as buffer clearing in when we use multiple selctive scanf creates buffer
 
-## 3. Name Input and Validation
+    save contact to file through fprintf  "w"   
 
-The contact name is taken using:
-scanf(" %[^\n]", addressBook->contacts->name);//space in scanf which skips newline left in input buffer
+    load through fprintf
